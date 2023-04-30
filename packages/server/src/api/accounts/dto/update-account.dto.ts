@@ -141,4 +141,24 @@ export class UpdateAccountDto {
   @IsString()
   @IsOptional()
   public smsFrom: string;
+
+  @IsString()
+  @IsOptional()
+  public awsAccessKeyId: string;
+  
+  @IsString()
+  @IsOptional()
+  public awsSecretAccessKey: string;
+
+  @IsString()
+  @IsOptional()
+  public awsRegion: string;
+
+  @IsString()
+  @IsOptional()
+  public awsSnsTopic: string;
+
+  @IsString()
+  @IsOptional()
+  public awsSenderEmail: string;
 }

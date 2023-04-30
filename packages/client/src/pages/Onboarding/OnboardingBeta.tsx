@@ -55,6 +55,13 @@ export const allEmailChannels = [
     disabled: false,
   },
   {
+    id: "ses",
+    title: "AWS SES",
+    subTitle: "for sending emails via SES",
+    tooltip: "TODO: Instructions for SNS Topic",
+    disabled: false,
+  },
+  {
     id: "mailchimp",
     title: "Mailchimp",
     subTitle: "Campaign: Transactional Receipt",
@@ -124,11 +131,23 @@ const expectedFields: Record<string, string[]> = {
   free3: ["testSendingEmail", "testSendingName"],
   mailgun: ["sendingName", "sendingEmail"],
   sendgrid: ["sendgridApiKey", "sendgridFromEmail"],
+  ses: [
+    "awsAccessKeyId",
+    "awsSecretAccessKey",
+    "awsRegion",
+    "awsSnsTopic",
+    "awsSenderEmail",
+  ],
 };
 
 const tabNames = ["Channels", "Events", "Customers"];
 
 interface IntegrationsData {
+  awsAccessKeyId: string;
+  awsSecretAccessKey: string;
+  awsRegion: string;
+  awsSnsTopic: string;
+  awsSenderEmail: string;
   sendingName: string;
   sendingEmail: string;
   testSendingEmail: string;
@@ -153,6 +172,11 @@ export default function OnboardingBeta() {
   const navigate = useNavigate();
   const { settings, domainsList } = useTypedSelector((state) => state.settings);
   const [integrationsData, setIntegrationsData] = useState<IntegrationsData>({
+    awsAccessKeyId: "",
+    awsSecretAccessKey: "",
+    awsRegion: "",
+    awsSnsTopic: "",
+    awsSenderEmail: "",
     sendingName: "",
     sendingEmail: "",
     testSendingEmail: "",
@@ -306,7 +330,13 @@ export default function OnboardingBeta() {
 
   const loadData = async () => {
     const { data } = await ApiService.get({ url: "/accounts" });
+
     const {
+      awsAccessKeyId,
+      awsSecretAccessKey,
+      awsRegion,
+      awsSnsTopic,
+      awsSenderEmail,
       sendingName,
       sendingEmail,
       slackTeamId,
@@ -328,8 +358,15 @@ export default function OnboardingBeta() {
       smsFrom,
       apiKey,
     } = data;
+
     setIntegrationsData({
       ...integrationsData,
+      awsAccessKeyId: awsAccessKeyId || integrationsData.awsAccessKeyId,
+      awsSecretAccessKey:
+        awsSecretAccessKey || integrationsData.awsSecretAccessKey,
+      awsRegion: awsRegion || integrationsData.awsRegion,
+      awsSnsTopic: awsSnsTopic || integrationsData.awsSnsTopic,
+      awsSenderEmail: awsSenderEmail || integrationsData.awsSenderEmail,
       posthogApiKey: posthogApiKey || integrationsData.posthogApiKey,
       posthogProjectId: posthogProjectId || integrationsData.posthogProjectId,
       posthogHostUrl: posthogHostUrl || integrationsData.posthogHostUrl,
@@ -809,6 +846,138 @@ export default function OnboardingBeta() {
           id="sendgridFromEmail"
           isError={!!errors["sendgridFromEmail"]}
           errorText={errors["sendgridFromEmail"]}
+          type="text"
+          labelClass="!text-[16px]"
+          onChange={handleIntegrationsDataChange}
+          onBlur={(e) =>
+            handleBlur(
+              e as {
+                target: {
+                  name?: string;
+                  value?: string;
+                  custattribute?: string;
+                  getAttribute?: (str: string) => string | undefined;
+                };
+              }
+            )
+          }
+        />
+      </>
+    ),
+    ses: (
+      <>
+        <Input
+          isRequired
+          value={integrationsData.awsAccessKeyId}
+          label="AWS Access Key"
+          placeholder={"****  "}
+          name="awsAccessKeyId"
+          id="awsAccessKeyId"
+          type="password"
+          isError={!!errors["awsAccessKeyId"]}
+          errorText={errors["awsAccessKeyId"]}
+          labelClass="!text-[16px]"
+          onChange={handleIntegrationsDataChange}
+          onBlur={(e) => {
+            callDomains();
+            handleBlur(
+              e as {
+                target: {
+                  name?: string;
+                  value?: string;
+                  custattribute?: string;
+                  getAttribute?: (str: string) => string | undefined;
+                };
+              }
+            );
+          }}
+        />
+        <Input
+          isRequired
+          value={integrationsData.awsSecretAccessKey}
+          label="AWS Secret Access Key"
+          placeholder={"******"}
+          name="awsSecretAccessKey"
+          id="awsSecretAccessKey"
+          isError={!!errors["awsSecretAccessKey"]}
+          errorText={errors["awsSecretAccessKey"]}
+          type="password"
+          labelClass="!text-[16px]"
+          onChange={handleIntegrationsDataChange}
+          onBlur={(e) =>
+            handleBlur(
+              e as {
+                target: {
+                  name?: string;
+                  value?: string;
+                  custattribute?: string;
+                  getAttribute?: (str: string) => string | undefined;
+                };
+              }
+            )
+          }
+        />
+        {/* TODO - Dropdown? Select from list of regions */}
+        <Input
+          isRequired
+          value={integrationsData.awsRegion}
+          label="AWS Region"
+          placeholder={"us-east-1"}
+          name="awsRegion"
+          id="awsRegion"
+          isError={!!errors["awsRegion"]}
+          errorText={errors["awsRegion"]}
+          type="text"
+          labelClass="!text-[16px]"
+          onChange={handleIntegrationsDataChange}
+          onBlur={(e) =>
+            handleBlur(
+              e as {
+                target: {
+                  name?: string;
+                  value?: string;
+                  custattribute?: string;
+                  getAttribute?: (str: string) => string | undefined;
+                };
+              }
+            )
+          }
+        />
+        <Input
+          isRequired
+          value={integrationsData.awsSnsTopic}
+          label="AWS SNS Topic that receives SES notifications"
+          placeholder={"ses-notifications"}
+          name="awsSnsTopic"
+          id="awsSnsTopic"
+          isError={!!errors["awsSnsTopic"]}
+          errorText={errors["awsSnsTopic"]}
+          type="text"
+          labelClass="!text-[16px]"
+          onChange={handleIntegrationsDataChange}
+          onBlur={(e) =>
+            handleBlur(
+              e as {
+                target: {
+                  name?: string;
+                  value?: string;
+                  custattribute?: string;
+                  getAttribute?: (str: string) => string | undefined;
+                };
+              }
+            )
+          }
+        />
+        {/* TODO - Dropdown? get list of sender emails? */}
+        <Input
+          isRequired
+          value={integrationsData.awsSenderEmail}
+          label="AWS SES Sender Email ID"
+          placeholder={"email@email.com"}
+          name="awsSenderEmail"
+          id="awsSenderEmail"
+          isError={!!errors["awsSenderEmail"]}
+          errorText={errors["awsSenderEmail"]}
           type="text"
           labelClass="!text-[16px]"
           onChange={handleIntegrationsDataChange}

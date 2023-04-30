@@ -138,4 +138,19 @@ export class Account extends BaseEntity {
 
   @Column({ type: 'varchar', nullable: true })
   public smsFrom?: string;
+
+  @Column({ type: 'varchar', nullable: true})
+  public awsAccessKeyId?: string;
+
+  @Column({ type: 'varchar', nullable: true})
+  public awsSecretAccessKey?: string;
+
+  @Column({ type: 'varchar', nullable: true})
+  public awsRegion?: string;
+  
+  @Column({ type: 'varchar', nullable: true})
+  public awsSnsTopic: string;  
+
+  @Column({ type: 'varchar', nullable: true})
+  public awsSenderEmail: string;  
 }
